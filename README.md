@@ -192,11 +192,7 @@ For questions or issues, contact the project lead or open an issue in the reposi
 
 ---
 
-## 📄 License
 
-This project is for educational purposes as part of the Amdari Data Science program.
-
----
 
 **Last Updated:** October 9, 2025  
 **Author:** [Your Name]  
