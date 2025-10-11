@@ -10,7 +10,7 @@ This project applies **RFM (Recency, Frequency, Monetary)** analysis to retail b
 
 ---
 
-## 📁 Project Structure
+## 📁 Project Structures
 
 ```
 retail-banking/
