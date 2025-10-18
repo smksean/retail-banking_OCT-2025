@@ -10,7 +10,7 @@ This project applies **RFM (Recency, Frequency, Monetary)** analysis to retail b
 
 ---
 
-## 📁 Project Structure
+## 📁 Project Structures
 
 ```
 retail-banking/
@@ -240,10 +240,6 @@ jupyter notebook notebooks/clean_eda.ipynb
 ## 🤝 Contributing
 
 For questions or issues, contact the project lead or open an issue in the repository.
-
----
-
-
 
 ---
 
