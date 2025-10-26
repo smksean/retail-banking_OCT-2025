@@ -30,10 +30,16 @@ wheels/
 # VS Code
 .vscode/
 
-# Data (keep structure, ignore large files)
+# Data (ignore CSVs by default, allow required processed outputs for the app)
 *.csv
 !data/.gitkeep
 !data/processed/.gitkeep
+!data/processed/kmeans_customer_segments.csv
+!data/processed/cluster_profiles.csv
+!data/processed/kmeans_model_summary.csv
+# Optional (uncomment if you want to include this ~36MB file):
+#!data/processed/rfm_scores.csv
+# Keep large raw/derived files like transactions_clean.csv ignored (>100MB)
 
 # OS
 .DS_Store

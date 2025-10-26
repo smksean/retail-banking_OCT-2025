@@ -1,0 +1,8 @@
+Metric,Value
+Algorithm,KMeans
+Number of Clusters,4
+Total Customers,879358
+Silhouette Score,0.9185
+Davies-Bouldin Score,0.4062
+Calinski-Harabasz Score,"1,122,601.48"
+Top Segment (by revenue),At Risk
