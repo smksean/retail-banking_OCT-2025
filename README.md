@@ -1,249 +1,108 @@
-# Retail Banking — RFM-Based Customer Segmentation
+# Retail Banking — RFM Customer Segmentation
 
-**Project Status:** ✅ Data Cleaning & EDA Complete | ✅ RFM Refinement Complete
+> RFM analysis and segmentation of 880k retail banking customers across 1M+ transactions — three approaches compared, with a Streamlit dashboard for interactive exploration.
 
-## 📋 Project Overview
-
-This project applies **RFM (Recency, Frequency, Monetary)** analysis to retail banking transaction data to segment customers and develop targeted retention and engagement strategies for BankTrust.
-
-**Business Goal:** Reduce churn, improve personalization, and optimize marketing efficiency through data-driven customer segmentation.
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-orange.svg)](https://scikit-learn.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-dashboard-red.svg)](https://streamlit.io/)
 
 ---
 
-## 📁 Project Structures
+## Problem
 
-```
-retail-banking/
-│
-├── data/
-│   ├── bank_data_C.csv              # Raw transaction data
-│   └── processed/
-│       ├── transactions_clean.csv        # Cleaned transactions (1.04M rows)
-│       ├── rfm_scores.csv                # RFM scores & segments (880k customers)
-│       ├── rfm_scores_refined.csv        # Refined segmentation (all 3 approaches)
-│       └── rfm_refinement_summary.csv    # Executive summary of results
-│
-├── notebooks/
-│   ├── clean_eda.ipynb              # Data cleaning, EDA, RFM segmentation
-│   └── 02_rfm_refinement.ipynb      # RFM refinement analysis (3 approaches)
-│
-├── instructions.md                  # Original project brief
-└── README.md                        # This file
-```
+BankTrust needed to move from generic marketing campaigns to targeted, segment-specific strategies. With 1M+ transactions across 879k customers, the challenge was to produce actionable customer groups — not a large undifferentiated "Others" bucket that initial RFM scoring left at ~45% of the base.
 
 ---
 
-## 🎯 Current Project State
+## Approach
 
-### ✅ Completed
+### Data Cleaning & EDA
+- Loaded 1,041,614 transactions from 879,358 unique customers
+- Corrected day-first date parsing and 2-digit year issues
+- Validated zero duplicates; preserved raw data for modelling
+- Temporal coverage: Aug–Oct 2016; 73% male customers; top cities Mumbai, New Delhi, Bangalore
+- Heavy right-skew in transaction amounts and account balances
 
-1. **Data Ingestion & Cleaning**
-   - Loaded 1,041,614 transactions from 879,358 unique customers
-   - Parsed day-first dates with explicit format handling
-   - Fixed 2-digit year parsing issues (future DOBs corrected)
-   - Combined date + time into `TransactionDateTime`
-   - Validated: Zero duplicates
+### RFM Scoring
+Computed **Recency** (days since last transaction), **Frequency** (transaction count), and **Monetary** (total spend) as quintile scores (1–5) for all 880k customers.
 
-2. **Exploratory Data Analysis (EDA)**
-   - **Temporal coverage:** Aug 1 – Oct 21, 2016 (~2.5 months)
-   - **Demographics:** 73% male customers; top cities: Mumbai, New Delhi, Bangalore
-   - **Distributions:** Heavy right skew in transaction amounts and account balances
-   - **Outlier handling:**
-     - IQR method flags 10–13% as outliers
-     - Applied 1%–99% percentile capping for visualizations only
-     - Raw data preserved for modeling
-   - **Monthly trends:** Declining transaction volume from Aug → Oct (data coverage issue)
+### Segmentation Strategies Compared
 
-3. **RFM Segmentation (Initial)**
-   - Computed **Recency** (days since last transaction), **Frequency** (transaction count), **Monetary** (total amount)
-   - Assigned quintile scores (1–5) for each metric
-   - Mapped to business segments using rule-based logic:
-     - **Champions:** R≥4, F≥4, M≥4
-     - **Loyal:** R≥4, F≥3
-     - **Potential Loyalists:** R≥3, F≥2, M≥3
-     - **At Risk:** R≤2, F≤2, M≤2
-     - **Need Attention:** R≤2, F≥4
-     - **Others:** Everything else
+| Approach | Method | "Others" After |
+|----------|--------|---------------|
+| Expanded Rule-Based | 11 named segments with refined boundary logic | ~18–22% |
+| KMeans Clustering | Unsupervised on standardised RFM features (6–8 clusters, Silhouette-optimised) | 0% |
+| Hybrid | Priority rule-based segments + KMeans for middle tier | <5% |
 
-### 🚨 Key Issue Identified
-
-**Problem:** A large proportion of customers fall into the **"Others"** segment, limiting the actionability of our segmentation.
-
-**Current Segment Distribution** (approximate):
-- Others: ~40–50% of customers
-- Champions: ~10%
-- Loyal: ~15%
-- At Risk: ~8%
-- Potential Loyalists: ~12%
-- Need Attention: ~5%
-
-**Impact:**
-- Poor targeting precision for the "Others" group
-- Wasted marketing spend on generic campaigns
-- Missed opportunities for personalized engagement
+**Chosen approach: Expanded rule-based segmentation** — highest interpretability for business stakeholders with "Others" reduced below the 20% target.
 
 ---
 
-## 🎯 **ASSIGNMENT: Refine RFM Segmentation to Reduce "Others"**
+## Results
 
-### Objective
-
-**Develop and justify alternative segmentation approaches** to capture more customers into meaningful, actionable segments and reduce the "Others" category to <20% of the customer base.
-
-### Requirements
-
-Your solution must:
-
-1. **Propose at least TWO alternative approaches** to refine RFM segmentation:
-   - Option A: Modify the rule-based logic (e.g., expand segment definitions, add new segments)
-   - Option B: Use unsupervised learning (e.g., KMeans clustering on RFM features)
-   - Option C: Hybrid approach (combine rule-based + clustering)
-   - Option D: Create sub-segments within "Others" based on additional features (e.g., age from DOB, location tier)
-
-2. **Implement your chosen approach(es)** in a Jupyter notebook (`notebooks/02_rfm_refinement.ipynb`)
-
-3. **Provide clear justification** for each approach:
-   - **Why** this method is appropriate for the data
-   - **Trade-offs** (complexity vs. interpretability, precision vs. recall)
-   - **Expected business impact** (how will this improve targeting?)
-
-4. **Evaluate results:**
-   - Compare segment distributions before vs. after
-   - Profile each segment (avg R/F/M, customer count, total revenue contribution)
-   - Assess interpretability and actionability
-
-5. **Document findings:**
-   - Summary table of all approaches tested
-   - Recommendation: Which approach to deploy and why
-   - Markdown cells explaining reasoning at each step
-
-### Evaluation Criteria
-
-- **Creativity:** Novel approaches beyond basic RFM rules
-- **Rigor:** Statistical justification, quantitative evaluation
-- **Business Acumen:** Segmentation must be interpretable and actionable
-- **Code Quality:** Clean, well-commented, reproducible
-- **Communication:** Clear markdown explanations in notebook
-
-### Deliverable
-
-- New notebook: `notebooks/02_rfm_refinement.ipynb`
-- Updated `README.md` with your approach summary
-- (Optional) Updated `rfm_scores.csv` with refined segments
+- "Others" reduced from ~45% to ~18–22%
+- 11 actionable customer segments with direct marketing strategy mapping
+- Output: `data/processed/rfm_scores_refined.csv` — all customers with segment labels and RFM scores
 
 ---
 
-## ✅ **ASSIGNMENT COMPLETED**
+## How to Run
 
-### Summary of Solution
-
-**Implemented THREE alternative approaches** to reduce the "Others" segment and improve customer segmentation actionability:
-
-#### 1. **Expanded Rule-Based Segmentation** ⭐ (Recommended)
-- **Methodology:** Extended original 6 segments to 11 granular categories
-- **New segments added:** Recent Customers, Promising, About to Sleep, Can't Lose Them, Hibernating
-- **Results:** Reduced "Others" from ~45% to ~18-22%
-- **Pros:** High interpretability, easy implementation, immediate business actionability
-- **Cons:** Rules still somewhat arbitrary
-
-#### 2. **KMeans Clustering**
-- **Methodology:** Unsupervised learning on standardized RFM features
-- **Optimal clusters:** 6-8 clusters (determined by Silhouette Score analysis)
-- **Results:** 100% of customers assigned, "Others" eliminated entirely
-- **Pros:** Data-driven boundaries, discovers hidden patterns
-- **Cons:** Less interpretable, requires statistical expertise
-
-#### 3. **Hybrid Approach**
-- **Methodology:** Preserve priority segments (Champions, At Risk) from rules, cluster remaining customers
-- **Two-stage process:** Rule-based (5 segments) + KMeans (6 sub-segments for middle tier)
-- **Results:** "Others" eliminated or <5%, 12-15 total segments
-- **Pros:** Balances interpretability with ML precision
-- **Cons:** More complex to implement and maintain
-
-### Final Recommendation: **Expanded Rule-Based Segmentation**
-
-**Rationale:**
-1. ✅ Achieves core objective (<20% "Others")
-2. ✅ High interpretability for business teams
-3. ✅ Low implementation complexity
-4. ✅ All segments map directly to marketing strategies
-
-**Next Steps:**
-1. Deploy expanded segmentation in production CRM
-2. Create segment-specific campaign templates
-3. A/B test targeted campaigns vs. baseline
-4. Validate with KMeans clustering quarterly
-
-**Files Generated:**
-- `notebooks/02_rfm_refinement.ipynb` — Complete analysis with all 3 approaches
-- `data/processed/rfm_scores_refined.csv` — Customer data with all segmentation approaches
-- `data/processed/rfm_refinement_summary.csv` — Executive summary report
-
----
-
-## 🛠 Installation & Setup
-
-### Prerequisites
-
-- Python 3.8+
-- Jupyter Notebook / JupyterLab
-- Git
-
-### Dependencies
-
+**Install dependencies:**
 ```bash
 pip install numpy pandas matplotlib seaborn scikit-learn streamlit
 ```
 
-### Run the Notebook
-
+**Run the Streamlit dashboard:**
 ```bash
-cd retail-banking
-jupyter notebook notebooks/clean_eda.ipynb
+streamlit run app.py
+```
+
+**Or explore the notebooks:**
+```bash
+jupyter notebook notebooks/clean_eda.ipynb          # Cleaning, EDA, initial RFM
+jupyter notebook notebooks/02_rfm_refinement.ipynb  # Three segmentation approaches
 ```
 
 ---
 
-## 📊 Data Dictionary
+## Tech Stack
 
-| Field                  | Description                          |
-|------------------------|--------------------------------------|
-| `TransactionID`        | Unique transaction identifier        |
-| `CustomerID`           | Unique customer identifier           |
-| `CustomerDOB`          | Customer date of birth               |
-| `CustGender`           | Customer gender (M/F/T)              |
-| `CustLocation`         | Customer city/location               |
-| `CustAccountBalance`   | Current account balance (INR)        |
-| `TransactionDate`      | Date of transaction                  |
-| `TransactionTime`      | Time of transaction (HHMMSS)         |
-| `TransactionAmount`    | Transaction value (INR)              |
+`Python` · `pandas` · `scikit-learn` · `Streamlit` · `matplotlib` · `seaborn` · `NumPy`
 
 ---
 
-## 📈 Next Steps (After Assignment)
+## Project Structure
 
-1. **Deploy Streamlit Dashboard**
-   - Interactive RFM explorer
-   - Segment filters and drill-downs
-   - "What-if" scenario simulation
-
-2. **Predictive Modeling**
-   - Churn prediction using RFM + demographics
-   - Customer lifetime value (CLV) estimation
-
-3. **A/B Testing Framework**
-   - Test targeted campaigns per segment
-   - Measure uplift in engagement/revenue
-
----
-
-## 🤝 Contributing
-
-For questions or issues, contact the project lead or open an issue in the repository.
+```
+retail-banking_OCT-2025/
+├── app.py                              # Streamlit dashboard
+├── demo_app.py                         # Demo version
+├── notebooks/
+│   ├── clean_eda.ipynb                 # Data cleaning + EDA + initial RFM
+│   ├── 02_rfm_refinement.ipynb         # Three segmentation approaches
+│   └── 03_unsupervised_learning_annotated.ipynb
+├── data/processed/
+│   ├── kmeans_customer_segments.csv
+│   ├── cluster_profiles.csv
+│   └── kmeans_model_summary.csv
+└── requirements.txt
+```
 
 ---
 
-**Last Updated:** October 9, 2025  
-**Author:** Sean Afamefuna  
-**Course:** Optimizing Retail Banking Strategies Through RFM-Based Customer Segmentation
+## Segment Definitions
 
+| Segment | Criteria | Strategy |
+|---------|----------|----------|
+| Champions | R≥4, F≥4, M≥4 | Reward and upsell |
+| Loyal | R≥4, F≥3 | Loyalty programme |
+| Potential Loyalists | R≥3, F≥2, M≥3 | Nurture with targeted offers |
+| At Risk | R≤2, F≤2, M≤2 | Re-engagement campaign |
+| Can't Lose Them | High M, declining R | Priority win-back |
+| Hibernating | Low R, low F | Low-cost reactivation |
+| Need Attention | Low R, high F | Churn risk investigation |
+| Recent Customers | High R, low F | Onboarding journey |
+| Promising | Medium R, medium F | Early loyalty nudges |
+| About to Sleep | Declining R | Proactive retention |
+| Others | Remainder | Generic campaigns |
